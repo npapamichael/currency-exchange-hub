@@ -1,0 +1,63 @@
+name: Full Stack Build & CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: nikolas1234
+          POSTGRES_DB: exchangehub
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready" 
+          --health-interval 10s 
+          --health-timeout 5s 
+          --health-retries 5
+
+      redis:
+        image: redis:alpine
+        ports:
+          - 6379:6379
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js 18
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+
+    - name: Install backend dependencies
+      run: |
+        cd backend
+        npm install
+
+    - name: Install frontend dependencies
+      run: |
+        cd frontend
+        npm install
+
+    - name: Build frontend
+      run: |
+        cd frontend
+        npm run build
+        
+    - name: Build backend Docker image
+      run: |
+        docker build -t exchange-backend ./backend
+
+    - name: Build frontend Docker image
+      run: |
+        docker build -t exchange-frontend ./frontend

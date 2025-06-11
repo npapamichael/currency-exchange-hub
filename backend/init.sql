@@ -8,3 +8,8 @@ CREATE TABLE IF NOT EXISTS integrations (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+INSERT INTO integrations (name, api_key, base_url, usage_limit, is_active)
+VALUES 
+  ('Frankfurter', '', 'https://api.frankfurter.app', 1000, true),
+  ('ExchangeRate API', '', 'https://v6.exchangerate-api.com/v6/demo/latest', 1000, true);
