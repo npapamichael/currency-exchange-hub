@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 export default function CurrencyConverter({ base }) {
+  const [amount, setAmount] = useState(1);
   const [currencies, setCurrencies] = useState([]);
   const [fromCurrency, setFromCurrency] = useState(base);
   const [toCurrency, setToCurrency] = useState("");
@@ -70,6 +71,19 @@ export default function CurrencyConverter({ base }) {
             ))}
           </select>
         </div>
+<div style={{ marginTop: "0rem" }}>
+  <label className="form-label" htmlFor="amount">Amount:</label>
+  <input
+    id="amount"
+    type="number"
+    min="0"
+    className="form-input"
+    value={amount}
+    onChange={(e) => setAmount(e.target.value)}
+    style={{ width: "140px" }}
+    placeholder="Enter amount"
+  />
+</div>
 
         <div>
           <label className="form-label" htmlFor="toCurrency">
@@ -90,11 +104,14 @@ export default function CurrencyConverter({ base }) {
         </div>
       </div>
 
-      <div style={{ marginTop: "1rem", fontWeight: "700", fontSize: "1.2rem" }}>
+      <div style={{ marginTop: "2rem", fontWeight: "700", fontSize: "1.2rem" }}>
         {error && <p style={{ color: "#f87171" }}>{error}</p>}
         {conversionRate !== null ? (
           <p>
-            1 {fromCurrency} = {conversionRate.toFixed(4)} {toCurrency}
+           <p>
+  {amount} {fromCurrency} = {(amount * conversionRate).toFixed(4)} {toCurrency}
+</p>
+
           </p>
         ) : (
           !error && <p>Loading conversion rate...</p>

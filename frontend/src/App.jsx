@@ -20,6 +20,7 @@ const API_OPTIONS = {
 };
 
 function MainPage() {
+  const [amount, setAmount] = useState(1);
   const [rates, setRates] = useState({});
   const [prevRates, setPrevRates] = useState({});
   const [base, setBase] = useState("USD");
@@ -79,32 +80,34 @@ function MainPage() {
             ))}
           </select>
         </div>
-
+            
         <div style={{ color: "#bbb", fontWeight: 600 }}>
           Last updated: {lastUpdated || "N/A"}
         </div>
       </div>
-
-      <div className="d-flex flex-wrap gap-3 mb-4 align-items-center">
-        <label className="form-label">Base Currency:</label>
-        <select
-          className="form-select"
-          value={base}
-          onChange={(e) => setBase(e.target.value)}
-        >
-          {["USD", "EUR", "GBP", "AUD", "JPY", "CAD", "CHF"].map((cur) => (
-            <option key={cur} value={cur}>
-              {cur}
-            </option>
-          ))}
-        </select>
-
-        <button
+<button
           className="btn btn-outline-light"
           onClick={() => navigate("/integrations")}
+          style={{ marginBottom: "10px" }}
         >
           Manage API Integrations
         </button>
+      <div className="d-flex flex-wrap gap-3 mb-4 align-items-center">
+        <div>
+          <label className="form-label">Base Currency:</label>
+          <select
+            className="form-select"
+            value={base}
+            onChange={(e) => setBase(e.target.value)}
+          >
+            {["USD", "EUR", "GBP", "AUD", "JPY", "CAD", "CHF"].map((cur) => (
+              <option key={cur} value={cur}>
+                {cur}
+              </option>
+            ))}
+          </select>
+        </div>
+
       </div>
 
       {loading && <p style={{ textAlign: "center" }}>Loading rates...</p>}
@@ -114,11 +117,12 @@ function MainPage() {
 
       {!loading && !error && (
         <>
-          <CurrencyConverter base={base} />
+          <CurrencyConverter base={base} amount={amount} />
           <ExchangeRates
             rates={rates}
             prevRates={prevRatesRef.current}
             base={base}
+            amount={amount}
           />
         </>
       )}

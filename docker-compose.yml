@@ -1,17 +1,28 @@
-version: '3.8'
-
 services:
   backend:
     build: ./backend
     ports:
       - "3000:3000"
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_started
+      redis:
+        condition: service_started
     env_file:
       - ./backend/.env
     volumes:
       - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      backend:
+        condition: service_started
+    volumes:
+      - ./frontend:/app
 
   postgres:
     image: postgres:14
@@ -21,8 +32,6 @@ services:
       POSTGRES_DB: exchangehub
     ports:
       - "5432:5432"
-    volumes:
-      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   redis:
     image: redis:alpine

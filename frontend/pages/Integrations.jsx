@@ -14,44 +14,56 @@ function Integrations() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  // Base URL for backend API, set in .env as VITE_API_BASE_URL
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
+
+  // Fetch integrations from backend
+  const fetchIntegrations = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/api/integrations`);
+      setIntegrations(res.data);
+      setError("");
+    } catch (err) {
+      setError("Failed to load integrations.");
+    }
+  };
+
+  // Run once on component mount
   useEffect(() => {
     fetchIntegrations();
   }, []);
 
-  const fetchIntegrations = async () => {
-  try {
-    const res = await axios.get("/api/integrations");
-    console.log("✅ Integrations fetched:", res.data);
-
-    setIntegrations(res.data);
-    setError(""); // ✅ clear old errors
-  } catch (err) {
-    console.error("❌ Error fetching integrations:", err.message);
-    setError("Failed to load integrations.");
-  }
-};
-
+  // Handle input change
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
+  // Submit form for create or update
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!form.name || !form.api_key || !form.base_url) {
+      setError("All fields are required.");
+      return;
+    }
+
     try {
       if (editingId) {
-        await axios.put(`/api/integrations/${editingId}`, {
-          ...form,
-          is_active: true,
-        });
+        await axios.put(
+          `${API_BASE_URL}/api/integrations/${editingId}`,
+          { ...form, is_active: true }
+        );
       } else {
-        await axios.post("/api/integrations", form);
+        await axios.post(`${API_BASE_URL}/api/integrations`, form);
       }
       resetForm();
-      fetchIntegrations();
+      await fetchIntegrations();
+      setError("");
     } catch {
       setError("Error saving integration.");
     }
   };
 
+  // Load integration data into form for editing
   const handleEdit = (integration) => {
     setForm({
       name: integration.name,
@@ -62,11 +74,18 @@ function Integrations() {
     setEditingId(integration.id);
   };
 
+  // Deactivate (delete) integration
   const handleDelete = async (id) => {
-    await axios.delete(`/api/integrations/${id}`);
-    fetchIntegrations();
+    try {
+      await axios.delete(`${API_BASE_URL}/api/integrations/${id}`);
+      await fetchIntegrations();
+      setError("");
+    } catch {
+      setError("Error deactivating integration.");
+    }
   };
 
+  // Reset form to initial state
   const resetForm = () => {
     setForm({ name: "", api_key: "", base_url: "", usage_limit: 0 });
     setEditingId(null);

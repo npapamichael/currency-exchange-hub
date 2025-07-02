@@ -14,6 +14,10 @@
 - Redis caching for latest exchange rates to reduce external API calls
 - Docker Compose setup (Postgres + Redis + Backend + Frontend)
 - GitHub Actions CI pipeline: backend + frontend install, build, and Docker image verification
+- Implemented CORS in backend for frontend-backend communication
+- Environment variable support for API base URLs in frontend
+- Complete CRUD operations for integrations fully wired between frontend and backend
+- Proper error handling and status feedback in UI for smooth UX
 
 ---
 
@@ -34,7 +38,7 @@
 
 ###  Exchange Rates & Conversion
 
-- Fully functional `GET /api/rates` endpoint
+- Fully functional `GET /api/exchange-rates` endpoint
 - Periodic automatic rate refresh (every 60 seconds)
 - Exchange rates cache using Redis
 - Currency converter with live rates (conversion fallback temporarily skipped)
@@ -46,6 +50,8 @@
   - Searchable, styled form + live data table
 - Data stored dynamically in PostgreSQL
 - Seamless frontend-backend sync
+- Frontend Axios calls configurable via environment variable for API base URL
+- Backend CORS middleware enabled for cross-origin requests
 
 ###  Build & Deployment
 
@@ -61,12 +67,12 @@
 
 | Deferred Feature | Current Status |
 |-------------------|----------------|
-| Full fallback system (dynamic plugin-based API switching) | ❌ Skipped |
+| Full fallback system (dynamic API switching) | ❌ Skipped |
 | Monitoring & alerting | ❌ Skipped |
 | Historical data storage | ❌ Skipped |
 | Encrypted config/secrets | ❌ Skipped |
 | Unit / Integration tests | ❌ Skipped |
-| Full conversion endpoint (external API structure variance issue) | ❌ Skipped |
+| Full conversion endpoint | ❌ Skipped |
 
 ---
 
@@ -102,24 +108,32 @@ currency-exchange-hub/
 - Node.js & npm (for frontend)
 
 ### Backend Environment Variables (`backend/.env`):
-PORT=3000
 DB_HOST=postgres
 DB_PORT=5432
 DB_USER=postgres
 DB_PASSWORD=nikolas1234
 DB_DATABASE=exchangehub
-REDIS_URL=redis://redis:6379
+CURRENCY_API_KEY=cur_live_Mg44UmF1WO2jKEi9nKn0hp6IdvP9tdfAKHmlAjWS
+VITE_API_BASE_URL=
+
+### Frontend Environment Variables (`frontend/.env.production`):
+VITE_API_BASE_URL=http://localhost:3000
 
 ### Run Entire System via Docker Compose:
 docker-compose up --build
 
 ---
 
+### Install Node Modules
+- Root Folder: npm install
+- cd backend: npm install
+- cd frontend: npm install
+
+
 # API Reference
 exchange Rates
 Method	Path	    Description
-GET	    /api/rates	Retrieve latest exchange rates
-GET	    /api/convert	(partially implemented, deferred)
+GET	    /api/exchange-rates	Retrieve latest exchange rates
 
 # Integration Management
 Method	Path	            Description

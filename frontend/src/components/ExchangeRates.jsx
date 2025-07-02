@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export default function ExchangeRates({ rates, prevRates, base }) {
+export default function ExchangeRates({ rates, prevRates, base, amount }) {
   const [search, setSearch] = useState("");
 
   const getTrendClass = (currency) => {
@@ -37,15 +37,13 @@ export default function ExchangeRates({ rates, prevRates, base }) {
 
       <ul className="list-group">
         {filteredRates.map(([currency, rate]) => (
-          <li key={currency} className="list-group-item">
-            <span>{currency}</span>
-            <span>
-              {rate.toFixed(4)}
-              <span className={getTrendClass(currency)} style={{ marginLeft: 6 }}>
-                {getTrendArrow(currency)}
-              </span>
-            </span>
-          </li>
+         <li key={currency} className="list-group-item d-flex justify-content-between">
+  <span>{amount} {base} = {(rate * amount).toFixed(4)} {currency}</span>
+  <span className={getTrendClass(currency)}>
+    {getTrendArrow(currency)}
+  </span>
+</li>
+
         ))}
       </ul>
     </>
