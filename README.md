@@ -101,6 +101,10 @@ currency-exchange-hub/
 ---
 
 ## Local Setup
+### Install Node Modules Locally
+- Root Folder: npm install
+- cd backend: npm install
+- cd frontend: npm install
 
 ### Prerequisites:
 - Docker
@@ -120,14 +124,17 @@ VITE_API_BASE_URL=
 VITE_API_BASE_URL=http://localhost:3000
 
 ### Run Entire System via Docker Compose:
-docker-compose up --build
+- After cloning: git clone https://github.com/npapamichael/currency-exchange-hub.git --depth 1
+cd currency-exchange-hub
 
+1. docker-compose up -d postgres
+2. docker cp ./backend/init.sql currency-exchange-hub-postgres-1:/init.sql
+3. docker exec -it currency-exchange-hub-postgres-1 psql -U postgres -d exchangehub -f /init.sql
+4. docker-compose up --build
+
+This should ensure also that /integrations is visible and CRUD-operable on the frontend
 ---
 
-### Install Node Modules
-- Root Folder: npm install
-- cd backend: npm install
-- cd frontend: npm install
 
 
 # API Reference
